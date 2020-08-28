@@ -1,12 +1,14 @@
-
+var whc = layui.whc;
 function renderForm () {
   $.ajax({
     url: '/my/userinfo',
     success: function (res) {
-      $('input[name=username]').val(res.data.username);
-      $('input[name=nickname]').val(res.data.nickname);
-      $('input[name=email]').val(res.data.email);
-      $('input[name=id]').val(res.data.id);
+      //第一种方式
+      // $('input[name=username]').val(res.data.username);
+      // $('input[name=nickname]').val(res.data.nickname);
+      // $('input[name=email]').val(res.data.email);
+      // $('input[name=id]').val(res.data.id);
+      form.val("whc", res.data)
     }
   })
 };
@@ -26,4 +28,18 @@ $('form').on('submit', function (e) {
       }
     }
   })
+})
+
+// 表单验证
+var form = layui.form;
+form.verify(
+  {
+    chang: [/^\S{3,8}$/, "长度不够，请输入3~8位的昵称"]
+
+  }
+)
+//恢复初始值
+$('button[type=reset]').on('click', function (e) {
+  e.preventDefault();
+  renderForm();
 })
