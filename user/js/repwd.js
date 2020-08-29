@@ -20,7 +20,22 @@ form.verify({
       return '两次密码不一样哟~';
     }
   }
-
-
-
 });
+
+//更改密码到服务器
+$('.layui-form').on('submit', function (e) {
+  e.preventDefault();
+  var data = $(this).serialize();
+  $.ajax({
+    type: 'POST',
+    url: '/my/updatepwd',
+    data: data,
+    success: function (res) {
+      console.log(res);
+      layer.msg(res.message);
+      if (res.status === 0) {
+        $('form')[0].reset();
+      }
+    }
+  })
+})

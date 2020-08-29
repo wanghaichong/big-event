@@ -44,8 +44,7 @@ $('button:contains("确定")').click(function () {
     url: '/my/update/avatar',
     data: { avatar: base64 },
     success: function (res) {
-      console.log(res);
-      layer.msy(res.message)
+      layer.msg(res.message);
       if (res.status === 0) {
         window.parent.getUserInfo();
       }
