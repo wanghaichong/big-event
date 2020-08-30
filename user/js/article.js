@@ -101,3 +101,32 @@ template.defaults.imports.whc = function (t) {
 function addZero (n) {
   return n < 10 ? '0' + n : n;
 }
+
+//------------------------------- 删除功能
+$('body').on('click', 'button:contains("删除")', function () {
+
+  var id = $(this).data('id');
+  layer.confirm('你确定删除吗？', function (index) {
+    $.ajax({
+      url: '/my/article/delete/' + id,
+      success: function (res) {
+        console.log(res);
+        layer.msg(res.message)
+        if (res.status === 0) {
+          renderArticle()
+        }
+      }
+    })
+
+    layer.close(index)
+
+  })
+
+
+
+})
+
+
+
+
+

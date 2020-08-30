@@ -1,4 +1,12 @@
 var form = layui.form
+
+var id = new URLSearchParams(location.search).get('id')
+console.log(id);
+
+
+
+
+
 // ------------------------获取分类，渲染到下拉框位置-------------
 $.ajax({
   url: '/my/article/cates',
@@ -6,15 +14,25 @@ $.ajax({
     var html = template('tpl-category', res);
     $('#category').html(html);
     form.render('select')
+    //----------------------- 获取分类，渲染到下拉框的位置---------
+    $.ajax({
+      url: '/my/article/' + id,
+      success: function (res) {
+        console.log(res);
+        form.val('article', res.data);
+        //初始化文本编辑器
+        initEditor()
+        //更换图片（销毁剪裁区->更换图片->重建剪裁区）
+        $image.cropper('destroy').attr('src', 'http://ajax.frontend.itheima.net' + res.data.cover_img).cropper(options)
+      }
+    });
+
   }
-
-
 })
 
 
 
-//初始化文本编辑器
-initEditor()
+
 // ------------------------处理封面图片------------------
 // 1. 初始化图片裁剪器
 var $image = $('#image')
@@ -22,27 +40,12 @@ var $image = $('#image')
 // 2. 裁剪选项
 var options = {
   aspectRatio: 400 / 280,
-  preview: '.img-preview'
+  preview: '.img-preview',
+  autoCropArea: 1
 }
 
 // 3. 初始化裁剪区域
 $image.cropper(options)
-//-------------------点击选择封面能够选择图片--------------- 
-$('button:contains("选择封面")').click(function () {
-
-  $('#file').click()
-})
-//图片切换的时候，更换剪裁区的图片
-$('#file').change(function () {
-  // 找到对象
-  var fileObj = this.files[0];
-  // 创建url
-  var url = URL.createObjectURL(fileObj);
-  //更换图片
-  $image.cropper('destroy').attr('src', url).cropper(options);
-});
-
-
 //---------------------完成添加文章-----------------------
 $('#add-form').on('submit', function (e) {
   e.preventDefault();
@@ -62,10 +65,11 @@ $('#add-form').on('submit', function (e) {
     fd.forEach((val, key) => {
       console.log(key, val);
     })
+    fd.append('Id', id)
     $.ajax({
       type: 'POST',
       data: fd,
-      url: '/my/article/add',
+      url: '/my/article/edit',
       success: function (res) {
         layer.msg(res.message)
 
